@@ -120,18 +120,19 @@ describe('Issue create', () => {
   });
 
   
-  it.only('create a new issue using random data plugin', () => {
+  it('create a new issue using random data plugin', () => {
     //System finds modal for creating issue and does next steps inside of it
     const randomText = faker.lorem.word()
+    const randomTexts = faker.lorem.words()
     cy.get('[data-testid="modal:issue-create"]').within(() => {
             
       //Type value to description input field
-      cy.get('.ql-editor').type('faker.lorem.words');
+      cy.get('.ql-editor').type(randomTexts);
 
       //Type value to title input field
       //Order of filling in the fields is first description, then title on purpose
       //Otherwise filling title first sometimes doesn't work due to web page implementation
-      cy.get('input[name="title"]').type('faker.lorem.word');
+      cy.get('input[name="title"]').type(randomText);
       
       //Select Baby Yoda from reporter dropdown
       cy.get('[data-testid="select:userIds"]').click();
@@ -161,7 +162,7 @@ describe('Issue create', () => {
           .should('have.length', '5')
           .first()
           .find('p')
-          .contains('faker.lorem.word');
+          .contains(randomText);
       //Assert that correct avatar and type icon are visible
       cy.get('[data-testid="avatar:Baby Yoda"]').should('be.visible');
       cy.get('[data-testid="icon:task"]').should('be.visible');
