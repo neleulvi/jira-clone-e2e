@@ -12,44 +12,22 @@ describe('Issue delete', () => {
     });
   });
 
-  //issue title, that we are testing with, saved into variable
-  const issueTitle = 'This is an issue of type: Task.';
-  const trashCan = '[data-testid="icon:trash"]'
-  const confWin = '[data-testid="modal:confirm"]'
-  const Delete = 'Delete issue'
-  const Cancel = 'Cancel'
-  const Close = '[data-testid="icon:close"]'
-
-
   it('Should delete issue successfully', () => {
-    cy.get(trashCan).click()
-    cy.get(confWin).contains(Delete).click()
+    const expectedAmountOfIssuesAfterDeletion = 3;
 
-    //Assert that the deletion confirmation dialogue is not visible.
-    cy.get(confWin).should('not.exist')
-    //Assert that the issue is deleted and no longer displayed on the Jira board.
-    cy.reload();
-    cy.contains(issueTitle).should('not.exist');
-  });
-  it.only('Should delete issue successfully 2', () => {
-    IssueModal.trashCan
-    IssueModal.confWin
-    IssueModal.Delete
-    IssueModal.validateIssueVisibilityState("This is an issue of type: Task.",false)
-    
+    IssueModal.clickDeleteButton();
+    IssueModal.confirmDeletion();
+    IssueModal.ensureIssueIsNotVisibleOnBoard(issueTitle);
+    IssueModal.validateAmountOfIssuesInBacklog(expectedAmountOfIssuesAfterDeletion);
   });
 
-  it('Should cancel deletion process successfully', () => {
-    cy.get(trashCan).click()
-    //Cancel the deletion in the confirmation pop-up.
-    cy.get(confWin).contains(Cancel).click()
-    //Assert that the deletion confirmation dialogue is not visible.
-    cy.get(confWin).should('not.exist')
-    cy.contains(issueTitle)
-    cy.get(Close).click()
+  it('Should cancel delete issue process successfully', () => {
+    const expectedAmountOfIssuesAfterCancel = 4;
 
-    //Assert that the issue is not deleted and is still displayed on the Jira board.
-    cy.reload();
-    cy.contains(issueTitle).should('exist');
+    IssueModal.clickDeleteButton();
+    IssueModal.cancelDeletion();
+    IssueModal.closeDetailModal();
+    IssueModal.ensureIssueIsVisibleOnBoard(issueTitle);
+    IssueModal.validateAmountOfIssuesInBacklog(expectedAmountOfIssuesAfterCancel);
   });
 });
